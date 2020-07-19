@@ -30,9 +30,11 @@ use Exception;
 use PrestaShop\Marketplace\Client\MarketplaceClient;
 use PrestaShop\Marketplace\MetadataFile;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class PublishOnMarketplaceCommand extends Command
 {
@@ -69,14 +71,6 @@ class PublishOnMarketplaceCommand extends Command
      * @param array $archive
      */
     private $archive;
-
-    /**
-     * Reporter in charge of monitoring what is done and provide a complete report
-     * at the end of execution
-     *
-     * @var Reporter
-     */
-    private $reporter;
 
     protected function configure()
     {
@@ -169,9 +163,34 @@ class PublishOnMarketplaceCommand extends Command
         );
         $response = (new MarketplaceClient($this->apiKey))->publishExtension($data, $this->archive);
         $output->writeln('Done!');
+        $output->writeln('');
 
-        $output->writeln($response->getBody()->getContents());
+        $this->displayProductUploadDetails($input, $output, $response->getBody()->getContents());
         
         return $response->getStatusCode() === 200 ? 0 : 1;
+    }
+    
+    private function displayProductUploadDetails(InputInterface $input, OutputInterface $output, string $responseContents)
+    {
+        $decodedResponseContents = json_decode($responseContents, true);
+
+        if (empty($decodedResponseContents['success']) || $decodedResponseContents['success'] !== true) {
+            $output->writeln($responseContents);
+            return;
+        }
+
+        $rows = [];
+        foreach ($decodedResponseContents['productUpload'] as $property => $value) {
+            $rows[] = [$property, $value];
+        }
+        
+        $io = new SymfonyStyle($input, $output);
+        $io->success('The archive has been succesfully uploaded.');
+
+        $output->writeln('Product upload details:');
+        $table = new Table($output);
+        $table->setHeaders(['Property', 'Value']);
+        $table->setRows($rows);
+        $table->render();
     }
 }

@@ -27,7 +27,7 @@ class MarketplaceClient
     {
         $multipart = [
             [
-                'Content-type' => 'multipart/form-data',
+                //'Content-type' => 'multipart/form-data',
                 'name' => 'zip',
                 'contents' => fopen($archivePath, 'r'),
             ],
@@ -35,7 +35,7 @@ class MarketplaceClient
         foreach ($data as $key => $value) {
             $multipart[] = [
                 'name' => $key,
-                'contents' => 'value',
+                'contents' => $value,
             ];
         }
 
