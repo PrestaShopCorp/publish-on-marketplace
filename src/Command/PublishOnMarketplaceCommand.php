@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * 2007-2020 PrestaShop and Contributors
  *
@@ -41,38 +43,38 @@ class PublishOnMarketplaceCommand extends Command
     const UPDATE_TYPES = [
         'updatemin',
         'updatemaj',
-        'new'
+        'new',
     ];
 
     /**
      * API Key to use when requesting the marketplace
      *
-     * @param string $apiKey
+     * @var string
      */
     private $apiKey;
 
     /**
      * Content of the changelog
      *
-     * @param string $changelog
+     * @var string
      */
     private $changelog;
 
     /**
      * Path to product metadata (Technical & display name, PS compatibility range...).
-     * 
-     * @param array $metadata
+     *
+     * @var array
      */
     private $metadata;
 
     /**
      * Path to the archive
-     * 
-     * @param array $archive
+     *
+     * @var string
      */
     private $archive;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('prestashop:marketplace:publish')
@@ -110,7 +112,7 @@ class PublishOnMarketplaceCommand extends Command
             );
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         if (getenv('MARKETPLACE_API_KEY')) {
             $this->apiKey = getenv('MARKETPLACE_API_KEY');
@@ -144,19 +146,15 @@ class PublishOnMarketplaceCommand extends Command
         }
 
         if (!in_array($input->getOption('update-type'), self::UPDATE_TYPES)) {
-            throw new Exception(sprintf(
-                'Unrecognized update type "%s", allowed values are: %s',
-                $input->getOption('update-type'),
-                implode(', ', self::UPDATE_TYPES)
-            ));
+            throw new Exception(sprintf('Unrecognized update type "%s", allowed values are: %s', $input->getOption('update-type'), implode(', ', self::UPDATE_TYPES)));
         }
-        $this->metatada['type_upgrade'] = $input->getOption('update-type');
+        $this->metadata['type_upgrade'] = $input->getOption('update-type');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->write(sprintf('The archive (%s) for product #%d is being uploaded... ', $this->metatada['type_upgrade'], $this->metadata['id_product']));
-        
+        $output->write(sprintf('The archive (%s) for product #%d is being uploaded... ', $this->metadata['type_upgrade'], $this->metadata['id_product']));
+
         $data = array_merge(
             $this->metadata,
             ['change_log' => $this->changelog]
@@ -166,16 +164,17 @@ class PublishOnMarketplaceCommand extends Command
         $output->writeln('');
 
         $this->displayProductUploadDetails($input, $output, $response->getBody()->getContents());
-        
+
         return $response->getStatusCode() === 200 ? 0 : 1;
     }
-    
-    private function displayProductUploadDetails(InputInterface $input, OutputInterface $output, string $responseContents)
+
+    private function displayProductUploadDetails(InputInterface $input, OutputInterface $output, string $responseContents): void
     {
         $decodedResponseContents = json_decode($responseContents, true);
 
         if (empty($decodedResponseContents['success']) || $decodedResponseContents['success'] !== true) {
             $output->writeln($responseContents);
+
             return;
         }
 
@@ -183,7 +182,7 @@ class PublishOnMarketplaceCommand extends Command
         foreach ($decodedResponseContents['productUpload'] as $property => $value) {
             $rows[] = [$property, $value];
         }
-        
+
         $io = new SymfonyStyle($input, $output);
         $io->success('The archive has been succesfully uploaded.');
 

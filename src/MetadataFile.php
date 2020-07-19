@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * 2007-2020 PrestaShop and Contributors
  *
@@ -34,14 +36,14 @@ class MetadataFile
     /**
      * Header content
      *
-     * @param string $content
+     * @var string
      */
     private $content;
 
     /**
      * Path to the file
      *
-     * @param string $filePath
+     * @var string
      */
     private $filePath;
 
@@ -51,24 +53,21 @@ class MetadataFile
     public function __construct(string $filePath)
     {
         $this->filePath = $filePath;
+        $this->content = $this->loadFile();
     }
 
     /**
      * @return string Getter for Metadata content
      */
-    public function getContent()
+    public function getContent(): string
     {
-        if (null === $this->content) {
-            $this->loadFile();
-        }
-
         return $this->content;
     }
 
     /**
      * Checks the file and loads its content in memory
      */
-    private function loadFile()
+    private function loadFile(): string
     {
         if (!\file_exists($this->filePath)) {
             // If the file is not found, we might have a relative path
@@ -89,6 +88,6 @@ class MetadataFile
             throw new \Exception('File ' . $this->filePath . ' cannot be read.');
         }
 
-        $this->content = \file_get_contents($this->filePath);
+        return (string) \file_get_contents($this->filePath);
     }
 }

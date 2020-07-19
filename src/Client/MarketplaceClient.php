@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace PrestaShop\Marketplace\Client;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class MarketplaceClient
 {
@@ -20,10 +22,9 @@ class MarketplaceClient
                 'headers' => ['api-key' => $apiKey],
             ],
         );
-
     }
 
-    public function publishExtension(array $data, string $archivePath = ''): Response
+    public function publishExtension(array $data, string $archivePath): ResponseInterface
     {
         $multipart = [
             [
