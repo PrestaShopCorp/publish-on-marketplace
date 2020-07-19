@@ -20,7 +20,7 @@ class MarketplaceClient
             [
                 'base_uri' => 'https://addons.prestashop.com/request/index.php',
                 'headers' => ['api-key' => $apiKey],
-            ],
+            ]
         );
     }
 
