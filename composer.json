@@ -1,0 +1,25 @@
+{
+    "name": "prestashop/publish-on-marketplace",
+    "description": "Publish extensions on the PrestaShop Marketplace",
+    "config": {
+        "preferred-install": "dist",
+        "prepend-autoloader": false,
+        "optimize-autoloader": true
+    },
+    "bin": ["bin/publish-on-marketplace"],
+    "autoload": {
+        "psr-4": {
+            "PrestaShop\\Marketplace\\": "src/"
+        }
+    },
+    "author": "PrestaShop",
+    "require": {
+        "php": ">=7.2.5",
+        "symfony/console": "^3.4",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "prestashop/php-dev-tools": "^3.0",
+        "phpstan/phpstan": "^0.12.32"
+    }
+}
