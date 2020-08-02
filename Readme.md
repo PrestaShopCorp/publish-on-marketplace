@@ -1,5 +1,7 @@
 # Publish on Marketplace
 
+![PHP tests](https://github.com/PrestaShopCorp/publish-on-marketplace/workflows/PHP%20tests/badge.svg)
+
 This tool provide an way to upload new versions of extensions on the Marketplace, by using the seller API.
 
 ## Quickstart
