@@ -9,6 +9,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class MarketplaceClient
 {
+    const MARKETPLACE_URL = 'https://addons.prestashop.com/request/index.php';
+
     /**
      * @var Client
      */
@@ -18,7 +20,7 @@ class MarketplaceClient
     {
         $this->client = new Client(
             [
-                'base_uri' => 'https://addons.prestashop.com/request/index.php',
+                'base_uri' => self::MARKETPLACE_URL,
                 'headers' => ['api-key' => $apiKey],
             ]
         );

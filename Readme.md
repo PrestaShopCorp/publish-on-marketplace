@@ -28,6 +28,8 @@ Options:
       --metadata-json=METADATA-JSON  Path to Json file containing details of product
       --archive=ARCHIVE              Path to the archive to upload
       --update-type=UPDATE-TYPE      Type of upgrade (Minor update / Major / new) [default: "updatemin"]
+      --debug                        Display additional details
+      --dry-run                      Display actions to do without actually running them
 ```
 
 Note `--metadata-json` and `--archive` needs to be valid paths to your files.
