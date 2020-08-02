@@ -74,6 +74,20 @@ class PublishOnMarketplaceCommand extends Command
      */
     private $archive;
 
+    /**
+     * dry-run feature flag
+     *
+     * @var bool
+     */
+    private $runAsDry;
+
+    /**
+     * debug feature flag
+     *
+     * @var bool
+     */
+    private $debug;
+
     protected function configure(): void
     {
         $this
@@ -109,6 +123,18 @@ class PublishOnMarketplaceCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Type of upgrade (Minor update / Major / new)',
                 'updatemin'
+            )
+            ->addOption(
+                'debug',
+                null,
+                InputOption::VALUE_NONE,
+                'Display additional details'
+            )
+            ->addOption(
+                'dry-run',
+                null,
+                InputOption::VALUE_NONE,
+                'Display actions to do without actually running them'
             );
     }
 
@@ -130,6 +156,8 @@ class PublishOnMarketplaceCommand extends Command
             }
         }
 
+        $this->runAsDry = ($input->getOption('dry-run') === true);
+        $this->debug = ($input->getOption('debug') === true);
         $this->changelog = $input->getOption('changelog');
         $this->archive = $input->getOption('archive');
 
@@ -153,12 +181,20 @@ class PublishOnMarketplaceCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->write(sprintf('The archive (%s) for product #%d is being uploaded... ', $this->metadata['type_upgrade'], $this->metadata['id_product']));
-
         $data = array_merge(
             $this->metadata,
             ['change_log' => $this->changelog]
         );
+
+        if (true === $this->runAsDry || true === $this->debug) {
+            $this->displayDataToSend($data, $output);
+        }
+
+        if (true === $this->runAsDry) {
+            return 0;
+        }
+
+        $output->write(sprintf('The archive (%s) for product #%d is being uploaded... ', $this->metadata['type_upgrade'], $this->metadata['id_product']));
         $response = (new MarketplaceClient($this->apiKey))->publishExtension($data, $this->archive);
         $output->writeln('Done!');
         $output->writeln('');
@@ -178,18 +214,40 @@ class PublishOnMarketplaceCommand extends Command
             return;
         }
 
-        $rows = [];
-        foreach ($decodedResponseContents['productUpload'] as $property => $value) {
-            $rows[] = [$property, $value];
-        }
-
         $io = new SymfonyStyle($input, $output);
         $io->success('The archive has been succesfully uploaded.');
 
         $output->writeln('Product upload details:');
         $table = new Table($output);
         $table->setHeaders(['Property', 'Value']);
-        $table->setRows($rows);
+        $table->setRows($this->arrayToConsoleTable($decodedResponseContents['productUpload']));
         $table->render();
+    }
+
+    private function displayDataToSend(array $data, OutputInterface $output): void
+    {
+        $output->writeln('Marketplace endpoint: ' . MarketplaceClient::MARKETPLACE_URL);
+        $output->writeln('File to send: ' . $this->archive);
+        $output->writeln('API Key: ' . $this->apiKey);
+        $output->writeln('');
+
+        $table = new Table($output);
+        $table->setHeaders(['Key', 'Value']);
+        $table->setRows($this->arrayToConsoleTable($data));
+        $table->render();
+    }
+
+    /**
+     * Modify an array so its data can be used by the class Table.
+     * Keys become a value in the new array.
+     */
+    private function arrayToConsoleTable(array $data): array
+    {
+        $rows = [];
+        foreach ($data as $property => $value) {
+            $rows[] = [$property, $value];
+        }
+
+        return $rows;
     }
 }
