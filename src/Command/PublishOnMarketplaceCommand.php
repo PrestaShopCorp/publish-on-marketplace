@@ -102,8 +102,14 @@ class PublishOnMarketplaceCommand extends Command
             ->addOption(
                 'changelog',
                 null,
-                InputOption::VALUE_REQUIRED,
+                InputOption::VALUE_OPTIONAL,
                 'Content of the changelog of the version to upload'
+            )
+            ->addOption(
+                'changelog-file',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Path to the changelog of the version to upload'
             )
             ->addOption(
                 'metadata-json',
@@ -150,15 +156,24 @@ class PublishOnMarketplaceCommand extends Command
             throw new Exception('No API Key is set to authenticate the request to the marketplace. Please set the env var MARKETPLACE_API_KEY or the option --api-key=[...]');
         }
 
-        foreach (['archive', 'changelog', 'metadata-json'] as $option) {
+        foreach (['archive', 'metadata-json'] as $option) {
             if (empty($input->getOption($option))) {
                 throw new Exception(sprintf('Option --%s must be set.', $option));
             }
         }
 
+        if (empty($input->getOption('changelog')) && empty($input->getOption('changelog-file'))) {
+            throw new Exception(sprintf('Either option --changelog or --changelog-file must be set.'));
+        }
+
+        if (!empty($input->getOption('changelog-file'))) {
+            $this->changelog = (new MetadataFile($input->getOption('changelog-file')))->getContent();
+        } else {
+            $this->changelog = $input->getOption('changelog');
+        }
+
         $this->runAsDry = ($input->getOption('dry-run') === true);
         $this->debug = ($input->getOption('debug') === true);
-        $this->changelog = $input->getOption('changelog');
         $this->archive = $input->getOption('archive');
 
         if (empty($this->archive) || !file_exists($this->archive) || !is_readable($this->archive)) {
