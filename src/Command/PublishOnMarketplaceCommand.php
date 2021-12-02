@@ -183,7 +183,7 @@ class PublishOnMarketplaceCommand extends Command
     {
         $data = array_merge(
             $this->metadata,
-            ['change_log' => $this->changelog]
+            ['change_log' => str_replace(["\r\n", '\\r'], ["\n", ''], $this->changelog)]
         );
 
         if (true === $this->runAsDry || true === $this->debug) {

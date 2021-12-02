@@ -38,7 +38,7 @@ foreach ($autoloadFiles as $autoloadFile) {
 use PrestaShop\Marketplace\Command\PublishOnMarketplaceCommand;
 use Symfony\Component\Console\Application;
 
-$application = new Application('publish-on-marketplace', '1.0');
+$application = new Application('publish-on-marketplace', '1.1');
 $command = new PublishOnMarketplaceCommand();
 
 $application->add($command);
