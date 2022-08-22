@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class MarketplaceClient
 {
-    const MARKETPLACE_URL = 'https://addons.prestashop.com/request/index.php';
+    const MARKETPLACE_URL = 'https://api.addons.prestashop.com/request/index.php';
 
     /**
      * @var Client
