@@ -24,7 +24,8 @@ Usage:
 
 Options:
       --api-key[=API-KEY]            API Key of the marketplace (Optional if environment variable MARKETPLACE_API_KEY is set)
-      --changelog=CHANGELOG          Content of the changelog of the version to upload
+      --changelog=CHANGELOG          Content of the changelog of the version to upload, or
+      --changelog-file=CHANGELOG     Path to the changelog of the version to upload
       --metadata-json=METADATA-JSON  Path to Json file containing details of product
       --archive=ARCHIVE              Path to the archive to upload
       --update-type=UPDATE-TYPE      Type of upgrade (Minor update / Major / new) [default: "updatemin"]
