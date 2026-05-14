@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class MarketplaceClient
 {
-    const MARKETPLACE_URL = 'https://api.addons.prestashop.com/request/index.php';
+    public const MARKETPLACE_URL = 'https://api.addons.prestashop.com/request/index.php';
 
     /**
      * @var Client
@@ -33,7 +33,7 @@ class MarketplaceClient
     {
         $multipart = [
             [
-                //'Content-type' => 'multipart/form-data',
+                // 'Content-type' => 'multipart/form-data',
                 'name' => 'zip',
                 'contents' => fopen($archivePath, 'r'),
             ],

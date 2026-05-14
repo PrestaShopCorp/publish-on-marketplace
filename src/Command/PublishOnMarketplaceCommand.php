@@ -28,7 +28,6 @@ declare(strict_types=1);
 
 namespace PrestaShop\Marketplace\Command;
 
-use Exception;
 use PrestaShop\Marketplace\Client\MarketplaceClient;
 use PrestaShop\Marketplace\MetadataFile;
 use Symfony\Component\Console\Command\Command;
@@ -40,7 +39,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class PublishOnMarketplaceCommand extends Command
 {
-    const UPDATE_TYPES = [
+    public const UPDATE_TYPES = [
         'updatemin',
         'updatemaj',
         'new',
@@ -153,17 +152,17 @@ class PublishOnMarketplaceCommand extends Command
         }
 
         if (empty($this->apiKey)) {
-            throw new Exception('No API Key is set to authenticate the request to the marketplace. Please set the env var MARKETPLACE_API_KEY or the option --api-key=[...]');
+            throw new \Exception('No API Key is set to authenticate the request to the marketplace. Please set the env var MARKETPLACE_API_KEY or the option --api-key=[...]');
         }
 
         foreach (['archive', 'metadata-json'] as $option) {
             if (empty($input->getOption($option))) {
-                throw new Exception(sprintf('Option --%s must be set.', $option));
+                throw new \Exception(sprintf('Option --%s must be set.', $option));
             }
         }
 
         if (empty($input->getOption('changelog')) && empty($input->getOption('changelog-file'))) {
-            throw new Exception(sprintf('Either option --changelog or --changelog-file must be set.'));
+            throw new \Exception(sprintf('Either option --changelog or --changelog-file must be set.'));
         }
 
         if (!empty($input->getOption('changelog-file'))) {
@@ -177,7 +176,7 @@ class PublishOnMarketplaceCommand extends Command
         $this->archive = $input->getOption('archive');
 
         if (empty($this->archive) || !file_exists($this->archive) || !is_readable($this->archive)) {
-            throw new Exception(sprintf('File %s was not found, or cannot be read', $this->archive));
+            throw new \Exception(sprintf('File %s was not found, or cannot be read', $this->archive));
         }
         $this->metadata = json_decode(
             (new MetadataFile($input->getOption('metadata-json')))->getContent(),
@@ -185,11 +184,11 @@ class PublishOnMarketplaceCommand extends Command
         );
 
         if (empty($this->metadata)) {
-            throw new Exception('Metatada can\'t be loaded; Please check your Json.');
+            throw new \Exception('Metatada can\'t be loaded; Please check your Json.');
         }
 
         if (!in_array($input->getOption('update-type'), self::UPDATE_TYPES)) {
-            throw new Exception(sprintf('Unrecognized update type "%s", allowed values are: %s', $input->getOption('update-type'), implode(', ', self::UPDATE_TYPES)));
+            throw new \Exception(sprintf('Unrecognized update type "%s", allowed values are: %s', $input->getOption('update-type'), implode(', ', self::UPDATE_TYPES)));
         }
         $this->metadata['type_upgrade'] = $input->getOption('update-type');
     }
@@ -260,7 +259,7 @@ class PublishOnMarketplaceCommand extends Command
      * Keys become a value in the new array.
      *
      * @param array<string, string> $data
-     * 
+     *
      * @return array<string[]>
      */
     private function arrayToConsoleTable(array $data): array
