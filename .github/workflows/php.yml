@@ -9,6 +9,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: PHP syntax checker 7.4
+        uses: prestashop/github-action-php-lint/7.4@master
+
       - name: PHP syntax checker 8.4
         uses: prestashop/github-action-php-lint/8.4@master
 
