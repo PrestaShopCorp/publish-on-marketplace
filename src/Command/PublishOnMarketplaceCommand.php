@@ -63,7 +63,7 @@ class PublishOnMarketplaceCommand extends Command
     /**
      * Path to product metadata (Technical & display name, PS compatibility range...).
      *
-     * @var array
+     * @var array<string, string>
      */
     private $metadata;
 
@@ -239,6 +239,9 @@ class PublishOnMarketplaceCommand extends Command
         $table->render();
     }
 
+    /**
+     * @param array<string, string> $data
+     */
     private function displayDataToSend(array $data, OutputInterface $output): void
     {
         $output->writeln('Marketplace endpoint: ' . MarketplaceClient::MARKETPLACE_URL);
@@ -255,6 +258,10 @@ class PublishOnMarketplaceCommand extends Command
     /**
      * Modify an array so its data can be used by the class Table.
      * Keys become a value in the new array.
+     *
+     * @param array<string, string> $data
+     * 
+     * @return array<string[]>
      */
     private function arrayToConsoleTable(array $data): array
     {

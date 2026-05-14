@@ -5,5 +5,4 @@ parameters:
     - ../../src
     - ../../bin
   reportUnmatchedIgnoredErrors: false
-  checkMissingIterableValueType: false
   level: 6

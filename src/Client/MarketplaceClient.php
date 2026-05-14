@@ -26,6 +26,9 @@ class MarketplaceClient
         );
     }
 
+    /**
+     * @param array<string, string> $data
+     */
     public function publishExtension(array $data, string $archivePath): ResponseInterface
     {
         $multipart = [
